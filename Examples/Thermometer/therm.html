@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="de">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>IoT Thermometer</title>
+</head>
+<body>
+<p id="output"></p>
+<button id="refresh">Refresh</button>
+<script type="text/javascript">
+var output = document.getElementById("output");
+var refresh = document.getElementById("refresh");
+function handleErr(ev) {
+output.innerHTML = "Error: " + ev.type;
+}
+function getTemp() {
+output.innerHTML = "Loading...";
+var tm = new Date().getTime();
+var req = new XMLHttpRequest();
+req.open("GET", "/get");
+req.addEventListener("load", function() {
+if (this.responseText === "Error") output.innerHTML="Error: Temperature sensor error";
+else {var r=JSON.parse(this.responseText);output.innerHTML=r.tmp+" &deg;C<br>"+r.time+"ms";}
+});
+req.addEventListener("error", handleErr);
+req.addEventListener("timeout", handleErr);
+req.send();
+}
+refresh.addEventListener("click", getTemp, false);
+getTemp();
+</script>
+</body>
+</html>
